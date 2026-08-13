@@ -1,0 +1,42 @@
+<h1>Look what others are saying</h1>
+
+<% if (user) { %>
+    <p>Status:
+        <strong>
+            <% if (user.is_admin) { %>Admin
+            <% } else if (user.is_member) { %>Member
+            <% } else { %>Guest<% } %>
+        </strong>
+    </p>
+    <% if (!user.is_admin) { %>
+        <a href="/membership/join">Enter Secret Key (Become Member/Admin)</a> or
+    <% } %>
+    <a href="/messages/create">Post a Message</a>
+<% } %>
+
+<% if (messages.length > 0) { %>
+    <% messages.forEach(message => { %>
+        <div class="message-card">
+            <h2><%= message.title %></h2>
+            <p class="message-text"><%= message.text %></p>
+
+            <% if (user && (user.is_member || user.is_admin)) { %>
+                <p class="meta">By <%= message.author.first_name +" "+ message.author.last_name %></p>
+                <p class="meta">Sent at: <%= message.created_at.toLocaleString() %></p>
+            <% } else { %>
+                <p class="meta anonymous">By Anonymous — join the club to see author &amp; date</p>
+            <% } %>
+
+            <% if (user && user.is_admin) { %>
+                <form action="/membership/delete/<%= message.id %>" method="POST" class="delete-form">
+                    <button type="submit" class="btn-danger">Delete Message</button>
+                </form>
+            <% } %>
+        </div>
+    <% }); %>
+<% } else { %>
+    <p>No messages yet.</p>
+    <% if (user) { %>
+        <a href="/messages/create">Create your first message here</a>
+    <% } %>
+<% } %>
