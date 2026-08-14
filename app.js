@@ -22,18 +22,24 @@ app.set("views", path.join(__dirname, "/views"));
 app.use(layouts);
 app.use(express.urlencoded({ extended: false }));
 const pgStore = pgSession(session);
+app.set("trust proxy", 1);
+
 app.use(
   session({
     store: new pgStore({
-      pool: pool,
+      pool,
       tableName: "user_sessions",
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   }),
 );
-
 app.use(express.json());
 app.use(express.static("public"));
 
