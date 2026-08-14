@@ -1,3 +1,4 @@
+// app.js
 import "dotenv/config";
 import { errorHandler } from "./middleware/errorMiddleWare.js";
 import express from "express";
@@ -60,7 +61,12 @@ try {
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+export default app;
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
